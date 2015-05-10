@@ -3,7 +3,8 @@ module controller(
 	input [5:0] func,
 	input [4:0] rt,
 	output reg [7:0] ctrl,
-	output reg [5:0] aluOp
+	output reg [5:0] aluOp,
+	output reg [1:0] size
 );
 	//control
 	//output
@@ -39,6 +40,10 @@ module controller(
 	parameter sw = 'b101011;
 
 	always @(opcode) begin
+		if (opcode[5:3] == 'b100 || opcode[5:3] == 'b101)
+			size = opcode[1:0];
+		else
+			size = 'b11;
 		case(opcode)
 		rType :
 		begin
@@ -155,16 +160,18 @@ module controller(
 
 	end
 endmodule
-
+/*
 module test;
 	reg [5:0] op, func;
 	reg [4:0] rt;
 	wire [7:0] c;
 	wire [5:0] aluop;
-	controller ccc(op, func, rt, c, aluop);
+	wire [1:0] size_out;
+	controller ccc(op, func, rt, c, aluop, size_out);
 	initial begin
-		$monitor("opcode = %b : rt = %b : control = %b : function = %b : aluop = %b", op, rt, c, func, aluop);
+		$monitor("opcode = %b : rt = %b : control = %b : function = %b : aluop = %b : size_out = %b", op, rt, c, func, aluop, size_out);
 		op = 'b000000; func = 'b101010; rt = 'b11111;
 		#2 op = 'b101000; func = 'bxxxxxx; rt = 'b11111;
 	end
 endmodule
+*/

@@ -5,13 +5,13 @@ module register(
 	input[31:0] write_d,
 	output[31:0] read_d1, read_d2
 );
-	reg[31:0] register[0:31];
-	assign read_d1 = register[read_reg1];
-	assign read_d2 = register[read_reg2];
+	reg[31:0] r[0:31];
+	assign read_d1 = r[read_reg1];
+	assign read_d2 = r[read_reg2];
 	always @(negedge clk)
 	begin
 		if(write_enable)
-			register[write_reg] <= write_d;
+			r[write_reg] <= write_d;
 	end
 endmodule
 
