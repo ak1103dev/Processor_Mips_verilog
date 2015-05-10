@@ -51,12 +51,19 @@ module processor(
 
 	wire[31:0] read_data_mem;
 
+	initial
+	begin
+		pc = 32'h003FFFFC;
+	end
 
 	always @(posedge clock)
-		pc <= pc_next;
+	begin
+		if (reset) pc <= 32'h003FFFFC;
+		else pc <= pc_next;
+	end
 
 	adder add_pc(pc, 4, pc_4);
-    inst_rom instruction_memory(clock, 0, pc_next, instruction);
+    inst_rom instruction_memory(clock, reset, pc_next, instruction);
  	register regis_mod(clock, RegWrite, instruction[25:21], instruction[20:16], write_reg[4:0], write_back, read_data_reg1, read_data_reg2);
 	controller control_unit(instruction[31:26], instruction[5:0], instruction[20:16], {RegDst, RegWrite, ALUSrc, MemRead, MemWrite, MemToReg, Jump, Branch}, ALUOp, size_in);
 	mux2to1 writeRegSelector(RegDst, {27'b0, instruction[20:16]}, {27'b0, instruction[15:11]}, write_reg);
@@ -70,7 +77,7 @@ module processor(
 	assign address_Jump = instruction[25:0] << 2;
 	mux2to1 mux_jump(Jump_out & Jump, address_noJump, address_Jump, pc_next);
 
-	data_memory dataMemory(clock, 'b0, result_alu, read_data_reg2, MemRead, MemWrite, size_in, read_data_mem, serial_in, serial_valid_in, serial_ready_in, serial_out, serial_rden_out, serial_wren_out);
+	data_memory dataMemory(clock, reset, result_alu, read_data_reg2, MemRead, MemWrite, size_in, read_data_mem, serial_in, serial_valid_in, serial_ready_in, serial_out, serial_rden_out, serial_wren_out);
 
 	mux2to1 mux_write_back(MemToReg, result_alu, read_data_mem, write_back);
 
