@@ -64,7 +64,7 @@ module processor(
 
 	adder add_pc(pc, 4, pc_4);
     inst_rom instruction_memory(clock, reset, pc_next, instruction);
- 	register regis_mod(clock, RegWrite, instruction[25:21], instruction[20:16], write_reg[4:0], write_back, read_data_reg1, read_data_reg2);
+ 	register regis_mod(clock, reset, RegWrite, instruction[25:21], instruction[20:16], write_reg[4:0], write_back, read_data_reg1, read_data_reg2);
 	controller control_unit(instruction[31:26], instruction[5:0], instruction[20:16], {RegDst, RegWrite, ALUSrc, MemRead, MemWrite, MemToReg, Jump, Branch}, ALUOp, size_in);
 	mux2to1 writeRegSelector(RegDst, {27'b0, instruction[20:16]}, {27'b0, instruction[15:11]}, write_reg);
 	sign_extender sign_ex16to32(instruction[15:0], immediate);
