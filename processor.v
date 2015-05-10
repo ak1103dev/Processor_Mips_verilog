@@ -20,6 +20,10 @@ module processor(
 	output serial_wren_out
 );
 	reg[31:0] pc;
+	wire[31:0] pc_next;
+	adder add(pc, 4, pc_next);
+	always @(posedge clock)
+		pc <= pc_next;
 endmodule
 /*
 module mux2to1(selector, in0, in1, out);
